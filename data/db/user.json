@@ -1,0 +1,5 @@
+{"_id":{"$oid":"5bdb3983e92ca412582fb010"},"css_map":{"top":25,"left":25,"background-color":"#8f8"},"name":"John","is_online":false}
+{"_id":{"$oid":"5bdb39a9cae6e029f0a4cd38"},"css_map":{"top":55.0,"left":150.0,"background-color":"yellow"},"name":"Bud","is_online":false,"top":55.0}
+{"_id":{"$oid":"5bdb3bcc7db43e1f6ca8f04b"},"css_map":{"top":85.0,"left":25,"background-color":"magenta"},"name":"Jimmy","is_online":false,"top":85.0}
+{"_id":{"$oid":"5bdb3c28d7189b27a0f582e3"},"css_map":{"top":115.0,"left":150.0,"background-color":"cyan"},"name":"Jamal","is_online":true,"top":115.0}
+{"_id":{"$oid":"5be002c2227bb631d0545569"},"css_map":{"top":145.0,"left":25,"background-color":"orange"},"name":"takashi","is_online":true,"top":145.0}

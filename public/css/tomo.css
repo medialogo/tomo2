@@ -1,0 +1,70 @@
+/* @CHARSET "UTF-8";*/
+/*
+ * lyaout.css
+ *
+*/
+
+/* @group reset */
+* {
+  margin : 0;
+  padding : 0;
+  -webkit-box-sizing : border-box;
+  -moz-box-sizing    : border-box;
+  box-sizing         : border-box;
+}
+a { text-decoration: none;}
+ul, ol { list-style : none;}
+* {
+
+  -webkit-user-select : none;
+  -khtml-user-select: none;
+  -moz-user-select : none;
+
+  -o-user-select	: none;
+  -ms-user-select	: none;
+  user-select		: none;
+
+  -webkit-user-drag : none;
+  -moz-user-drag    : none;
+   user-drag		  : none;
+
+-webkit-tap-highlight-color : transparent;
+-webkit-touch-callout		: none;
+}
+
+input, textarea, .spa-x-user-select {
+-webkit-user-select	: text;
+-kthml-user-select	: text;
+-moz-user-select	: text;
+-o-user-select		: text;
+-ms-user-select		: text;
+user-select			: text;
+}
+
+
+img { vertical-align: middle;
+      max-width: 100%;
+    }
+html {
+  /* font : 800 22px/22px Arial, Helvetica, sans-serif; */
+  /* font : 10pt 'Trebuchet M5', Verdana, Helvetica, Arial, sans-serif; */
+  font-family: Verdana, sans-serif;
+  line-height : 1.5;
+  font-size: 16px;
+}
+h1,h2, p { margin-bottom: 4px;}
+h3,h4,h5,h6 { margin-bottom: 4px;}
+h1 { font-size : 48px;}
+h2 { font-size : 36px;}
+h3 { font-size : 24px;}
+h4, h5, h6 { font-size : 16px;}
+h1 {line-height : 1}
+h2 {line-height : 1}
+h3 {line-height : 1.5}
+h4, h5, h6 {line-height : 1.5} 
+/* @end */
+
+body {
+  color : #444;
+  background-color : #888;
+}

@@ -1,0 +1,57 @@
+@CHARSET "UTF-8";
+/*
+ * tomo.list.css
+ * リスト機能スタイル
+*/
+
+
+.tomo-list {
+    top   : 0;
+    left  : 0;
+    right : 0;
+    bottom : 0;
+    z-index: 0;
+    background-color :lightblue;
+    /* font-size : 10px; */
+  }
+
+.tomo-list-head {
+    top   : 0;
+    left  : 0;
+    right : 0;
+    height: 30px;
+    padding : 0px 5px;
+    z-index: 1;
+    background-color :orange;
+  }
+
+button#new-item{
+    margin-left: 10px;
+}
+button#del-item{
+    margin-left: 150px;
+} 
+
+.tomo-list-item {
+    font-size : 16px;
+    line-height : 30px;
+    border-bottom:solid 1px rgb(30, 48, 30); 
+}
+
+
+.tomo-list-item:hover, .tomo-list-item.ui-selecting {
+    /* font-color : rgb(208, 226, 43); */
+    /* background-color: rgb(105, 119, 105);   */
+}
+.tomo-list-item:active, .tomo-list-item.ui-selected {
+    color: white;  
+    background-color: rgb(126, 163, 25);  
+}
+
+.ui-state-highlight {
+    background-color :magenta;
+}
+
+.ui-droppable.hover {
+    background-color: rgb(105, 119, 105);  
+}

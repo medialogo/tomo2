@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>ToMo Starter</title>
+
+<link rel="stylesheet" href="css/jquery-ui.css" type="text/css" />
+<link rel="stylesheet" href="css/jquery-ui.theme.css" type="text/css" />
+<link rel="stylesheet" href="css/draganddrop.css" type="text/css" />
+
+<link rel="stylesheet" href="css/tomo.css" type="text/css" />
+<link rel="stylesheet" href="css/tomo.shell.css" type="text/css" />
+<link rel="stylesheet" href="css/tomo.list.css" type="text/css" />
+<link rel="stylesheet" href="css/tomo.login.css" type="text/css" />
+
+<!-- loading sequence is importat -->
+<script type="text/javascript" src="socket.io/socket.io.js"></script>
+<script type="text/javascript" src="js/lib/taffy-min.js" ></script>
+<script type="text/javascript" src="js/lib/jquery.min.js" ></script>
+<script type="text/javascript" src="js/lib/jquery.uriAnchor.js" ></script>
+<script type="text/javascript" src="js/lib/jquery.event.gevent.js" ></script>
+<script type="text/javascript" src="js/lib/jquery.event.ue.js" ></script>
+<script type="text/javascript" src="js/lib/jquery-ui.js" ></script>
+<!-- <script type="text/javascript" src="js/lib/draganddrop.js" ></script> -->
+<!-- <script type="text/javascript" src="js/lib/jquery.ui.touch-punch.js" ></script> -->
+
+
+<script type="text/javascript" src="js/tomo.js" ></script>
+<script type="text/javascript" src="js/tomo.util.js" ></script>
+<script type="text/javascript" src="js/tomo.data.js" ></script>
+<script type="text/javascript" src="js/tomo.fake.js" ></script>
+<script type="text/javascript" src="js/tomo.model.js" ></script>
+<script type="text/javascript" src="js/tomo.util_b.js" ></script>
+<script type="text/javascript" src="js/tomo.shell.js" ></script>
+<script type="text/javascript" src="js/tomo.login.js" ></script>
+<script type="text/javascript" src="js/tomo.list.js" ></script>
+
+<script type="text/javascript">
+  $(function () { tomo.initModule($('#tomo')); });
+</script>
+</head>
+<body>
+  <div id="tomo"> </div>
+</body>
+</html>
