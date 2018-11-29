@@ -37,6 +37,7 @@ tomo.data = (function () {
 
   getSio = function (){
     if ( ! stateMap.sio ) { stateMap.sio = makeSio(); } 
+    console.log ("getSio!");
       return stateMap.sio;
   };
 

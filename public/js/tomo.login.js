@@ -28,6 +28,7 @@ var
             + 'パスワード<br><input type="password" id="tomo-login-form-passwd" value="lunkekke"><br><br>'
             + '<input type="submit" id="tomo-login-form-submit" value="ログイン">'
           + '</form>'
+          +'<div id="tomo-login-response">'
         + '</div>'
       + '</div>'
 

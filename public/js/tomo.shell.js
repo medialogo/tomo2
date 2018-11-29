@@ -67,10 +67,16 @@ initModule;
   };
   //DOMメソッド/setJqueryMap/終了 ------------
 
+  onLogin  = function( user_map ){
+    alert(user_map.name + "さんがログインしました"); 
+  }
   //-------- パブリックメソッド開始 ------------
   initModule = function ( $container, dest ) {
     // HTMLをロードし、jQueryコレクションをマッピングする
     stateMap.$container = $container;
+
+    $.gevent.subscribe( stateMap.$container, 'tomo-login', onLogin); 
+
     if ( dest === undefined ) {
       $container.html( configMap.main_html1 +configMap.main_html2  );
       setJqueryMap();

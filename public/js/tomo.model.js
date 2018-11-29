@@ -23,9 +23,6 @@ tomo.model = (function () {
     configMap = { anon_id : 'a0'},
     stateMap  = {
       anon_user	: null,   // 匿名userオブジェクトを格納
-      cid_serial: 0,
-      users_cid_map : {},// クライアントIDをキーとしたuserオブジェクトのマップ
-      users_db		 : TAFFY(), //userオブジェクトのTaffyDBコレクションを格納
       current_user	: null,
 
       todoCid_serial: 0,
@@ -47,64 +44,44 @@ tomo.model = (function () {
   // ---------------------
 
   userProto = {
-      get_is_current_user : function () { // オブジェクトが現在のユーザの場合にtrueを返す
+/*       get_is_current_user : function () { // オブジェクトが現在のユーザの場合にtrueを返す
           return this.cid === stateMap.current_user.cid;
       },
       get_is_anon : function () { // オブジェクトが匿名ユーザの場合にtrueを返す
           return this.cid === stateMap.anon_user.cid;
       }
-  };
+ */  };
 
-  makeCid = function (num = 1){
-      return 'id_' + ('00' + num ).slice(-2);
-  };
 
-  clearUsersDb = function (){
-      var current_user = stateMap.current_user;
-      stateMap.users_db = TAFFY();
-      stateMap.users_cid_map = {};
-      if ( current_user ) {
-          stateMap.users_db.insert( current_user );
-          stateMap.users_cid_map[ current_user.cid ] = current_user;
-      }
-  };
 
   completeLogin = function ( user_list ) {
       console.log("now completeLogin");
-      var user_map = user_list[0];
-      delete stateMap.users_cid_map[ user_map.cid ];
-      stateMap.current_user.cid = user_map._id;
-      stateMap.current_user.id = user_map._id;
-      stateMap.users_cid_map[ user_map._id ] = stateMap.current_user;
-
-      // チャットに参加
-      //chat.join();
-      $.gevent.publish( 'tomo-login', [ stateMap.current_user ]);
+      //var user_map = user_list[0];
+      //stateMap.current_user.id = user_map._id;
+    　stateMap.current_user = user_list[0];
+      $.gevent.publish( 'tomo-login', [ stateMap.current_user.name ]);
+      console.log ( stateMap.current_user);  
   };
 
 
   makeUser = function ( user_map ) {
     var user,
-          cid			= user_map.cid,
-          id 			= user_map.id,
+          id 		= user_map.id,
           passwd    = user_map.passwd,
           name		= user_map.name;
 
-    if ( !passwd || !name ) {
-        throw 'ユーザー名とパスワードが必要です';
+    if ( !user_map || !passwd || !name ) {
+        throw 'ユーザー名とパスワードを入力してください';
     }
 
     // userオブジェクトを作成
     user			= Object.create( userProto );
-    user.cid	= cid;
+    user.id = null;
     user.name = name;
     user.passwd = passwd;
+    user.is_onlie = false;
 
     if ( id ) { user.id = id; }
-
-    stateMap.users_cid_map[ cid ] = user;
-    //stateMap.users_db.insert( user );
-
     return user;
   };
 
@@ -115,10 +92,6 @@ tomo.model = (function () {
           return false;
       }
 
-      stateMap.users_db({ cid : user.cid }).remove();
-      if ( user.cid ){
-          delete stateMap.users_cid_map[ user.cid ];
-      }
       return true;
   };
   //
@@ -167,36 +140,45 @@ tomo.model = (function () {
   //------------------- パブリックメソッド↓ -------------------
   // パブリックメソッド /users/ ↓
   users = (function (){
-    var get_by_cid, get_db, get_current_user, login, logout,
-        users_list;
-
-    get_by_cid = function ( cid ){
-        return stateMap.users_cid_map[ cid ];
-    };
-
-    get_db = function () { return stateMap.users_db; };
+    var get_current_user, login, logout;
 
     get_current_user = function () { return stateMap.current_user; };
 
     login = function ( name, passwd  ) {
-        console.log("now login");
         var sio = isFakeData ? tomo.fake.mockSio : tomo.data.getSio();
         
-        stateMap.current_user = makeUser({
-            //cid : makeCid(),
-            name : name,
-            passwd : passwd
-        });
+        // stateMap.current_user = makeUser({
+        //     name : name,
+        //     passwd : passwd
+        // });
+        if ( !name || !passwd ) {
+            throw 'ユーザー名とパスワードを入力してください';
+        }
+    
+        var result;
+        $.ajax({
+            async: true,
+                url: 'http://localhost:3000/test',
+            type: 'post',
+            data:{ "name" : name, "passwd" : passwd},
+            dataType: 'json'
+            })
+               .done(function(res){
+                console.log(res[0].name);
+                if ( res ) {
+                    console.log("done" + Date.now());
+                    return true;
+                } else {
+                    return false;
+                }    
+               })
+               .fail(function(xhr, status, error){
+                 alert(status);
+                 return false;
+               });
+               //console.log("return" + Date.now());
+               //return result;
 
-//      sio.on( 'userupdate', completeLogin );  
-
-      sio.emit( 'adduser', {
-//          cid 	 : stateMap.current_user.cid,
-          name 	 : stateMap.current_user.name,
-          passwd	 : stateMap.current_user.passwd
-      });
-
-      return true;
     };
 
     logout = function () {
@@ -211,8 +193,6 @@ tomo.model = (function () {
     };
 
     return {
-      get_by_cid	: get_by_cid,
-      get_db			: get_db,
       get_current_user		: get_current_user,
       login				: login,
       logout			: logout
