@@ -33,9 +33,9 @@ tomo.model = (function () {
 
     isFakeData = false, // true,
 
-    userProto, makeCid, clearUsersDb, completeLogin,
+    userProto, makeCid, completeLogin,
     makeUser, removeUser, users, 
-    itemProto, makeTodoCid, makeItem, todo, 
+    itemProto, makeTodoCid, makeItem,clearItemDb,  todo, 
     initModule;
   //----------------- モジュールスコープ変数↑ ---------------
 
@@ -59,7 +59,7 @@ tomo.model = (function () {
       //var user_map = user_list[0];
       //stateMap.current_user.id = user_map._id;
     　stateMap.current_user = user_list[0];
-      $.gevent.publish( 'tomo-login', [ stateMap.current_user.name ]);
+      $.gevent.publish( 'tomo-login', true);
       console.log ( stateMap.current_user);  
   };
 
@@ -136,7 +136,9 @@ tomo.model = (function () {
 
         return item;
   };
-  
+  clearItemDb = function (){
+    stateMap.todo_db = TAFFY();
+  };
   //------------------- パブリックメソッド↓ -------------------
   // パブリックメソッド /users/ ↓
   users = (function (){
@@ -156,28 +158,32 @@ tomo.model = (function () {
         }
     
         var result;
+        clearItemDb();
         $.ajax({
             async: true,
-                url: 'http://localhost:3000/test',
+                url: 'http://localhost:3000/login',
             type: 'post',
             data:{ "name" : name, "passwd" : passwd},
             dataType: 'json'
             })
                .done(function(res){
-                console.log(res[0].name);
+//                console.log(res[0].name);
                 if ( res ) {
                     console.log("done" + Date.now());
-                    return true;
+                    result = true;
+                    completeLogin( res );
                 } else {
-                    return false;
+                    result = false;
                 }    
                })
                .fail(function(xhr, status, error){
-                 alert(status);
-                 return false;
+                 alert("login" + status);
+                 result = false;
+               })
+               .always(function() {
+
+                   $.gevent.publish( 'tomo-login', result);
                });
-               //console.log("return" + Date.now());
-               //return result;
 
     };
 
@@ -202,18 +208,53 @@ tomo.model = (function () {
 
   // パブリックメソッド /todo/ ↓
   todo = (function (){
-    var get_db, get_item, get_by_cid;
+    var get_items, get_db;
 
-    get_by_cid = function ( cid ){
-        return stateMap.todo_cid_map[ cid ];
-    };
     get_db = function () { return stateMap.todo_db; };
-    get_item = function () { return stateMap.current_item; };
+
+    get_items = function () { 
+        var result;
+        console.log(stateMap.current_user._id);
+        $.ajax({
+            async: true,
+                url: 'http://localhost:3000/ulist',
+            type: 'post',
+            data:{ "uid" : stateMap.current_user._id},
+            dataType: 'json'
+            })
+               .done(function(res){
+                if ( res ) {
+                    var i, item_map;
+                    result = true;
+                    for ( var i = 0; i < res.length; i++) {
+                        item_map = res[i];
+                        makeItem({
+                          id     : item_map._id,
+                          cid    : item_map._id,
+                          uid    : item_map.uid,
+                          linum  : item_map.linum,
+                          order  : item_map.order,
+                          title  : item_map.title,
+                          memo   : item_map.memo
+                        });
+                    }
+                } else {
+                    result = false;
+                }    
+               })
+               .fail(function(xhr, status, error){
+                 alert("item" + status);
+                 result = false;
+               })
+               .always(function() {
+                    $.gevent.publish( 'tomo-item-loaded', true);
+               });
+
+    };
 
     return {
-      get_by_cid : get_by_cid,
-      get_db			: get_db,
-      get_item		: get_item,
+      get_db        : get_db,
+      get_items		: get_items
     };
   }());
 
@@ -233,8 +274,8 @@ tomo.model = (function () {
       name: 'anonymous'
     });
     stateMap.user = stateMap.anon_user; // 現在のユーザの初期値は匿名ユーザ
-
-    if ( isFakeData ) {
+0
+/*     if ( isFakeData ) {
         // ユーザーリストの取得
         users_list = tomo.fake.getUsersList();
         for ( i = 0; i < users_list.length; i++) {
@@ -262,7 +303,7 @@ tomo.model = (function () {
             });
         }
     }
-  };
+ */  };
   // パブリックメソッド /initModule/ ↑
 
   // パブリックメソッドを返す

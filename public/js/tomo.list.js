@@ -196,14 +196,12 @@ initModule = function ( $append_target ) {
   setJqueryMap();
 
   stateMap.current_user = tomo.model.users.get_current_user(); 
-  stateMap.todo_db = tomo.model.todo.get_db();
-  stateMap.uid = tomo.model.users.get_current_user().id;
-  stateMap.get_item_by_cid = tomo.model.todo.get_by_cid;
+  stateMap.todo_db = tomo.model.todo.get_db(); 
 
   jqueryMap.$list_items.sortable().selectable();
 
 
-  stateMap.todo_db({uid: stateMap.uid}).order("order").each( function (item, idx) {
+  stateMap.todo_db().order("order").each( function (item, idx) {
 /*     todo_list[idx] = {
       id     : item._id,
       cid    : item.cid,

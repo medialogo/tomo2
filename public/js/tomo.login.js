@@ -40,7 +40,7 @@ var
   last_selected_item = -1,
 
   setJqueryMap,
-  onSubmit,
+  onSubmit, onLogin, onItemLoaded,
   configModule, initModule;
 
 //----------------- モジュールスコープ変数↑ ---------------
@@ -91,12 +91,26 @@ onSubmit = function() {
     jqueryMap.$msg.html( "ユーザー名とパスワードを入力してください" );
   } else {
     // ログイン処理
-    if (tomo.model.users.login(username, password)) {
-      tomo.shell.initModule($('#tomo'), 'list');
-    } else {
-      jqueryMap.$msg.html( "ログインできませんでした<br>" +
-                          "ユーザー名とパスワードを正しく入力してください");
-    }     
+    tomo.model.users.login(username, password);
+     
+  }
+}
+
+onLogin = function( result ) {
+  if ( result ) {
+    tomo.model.todo.get_items();
+  } else {
+    jqueryMap.$msg.html( "ログインできませんでした<br>" +
+    "ユーザー名とパスワードを正しく入力してください");
+  }
+}
+
+onItemLoaded = function( result ) {
+  if ( result ) {
+    tomo.shell.initModule($('#tomo'), 'list');
+  } else {
+    // jqueryMap.$msg.html( "ログインできませんでした<br>" +
+    // "ユーザー名とパスワードを正しく入力してください");
   }
 }
 
@@ -108,6 +122,9 @@ initModule = function ( $append_target ) {
   stateMap.$append_target = $append_target;
   $append_target.find("#tomo-shell-main").append( configMap.main_html );
   setJqueryMap();
+
+  $.gevent.subscribe( $("#tomo"), 'tomo-login', onLogin );
+  $.gevent.subscribe( $("#tomo"), 'tomo-item-loaded', onItemLoaded );
 
   jqueryMap.$submit.on("click", function ( event ) {
     onSubmit();
