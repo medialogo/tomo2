@@ -52,6 +52,7 @@ tomo.shell =(function () {
   },
   stateMap = {
     $container  : null,
+    $current_user : null,
   },
   jqueryMap = {},
 
@@ -67,26 +68,25 @@ initModule;
   };
   //DOMメソッド/setJqueryMap/終了 ------------
 
-/*   onLogin  = function( user_map ){
-    alert(user_map.name + "さんがログインしました"); 
-  } */
   //-------- パブリックメソッド開始 ------------
-  initModule = function ( $container, dest ) {
+  initModule = function ( $container ) {
     // HTMLをロードし、jQueryコレクションをマッピングする
     stateMap.$container = $container;
-
+    stateMap.current_user = tomo.model.users.get_current_user();
     // $.gevent.subscribe( stateMap.$container, 'tomo-login', onLogin); 
-
-    if ( dest === undefined ) {
-      $container.html( configMap.main_html1 +configMap.main_html2  );
-      setJqueryMap();
-      tomo.login.initModule(jqueryMap.$container);
-
-    } else if ( dest === 'list' ) {
-
+    if ( stateMap.current_user ) {
+      console.log("user_id:" + stateMap.current_user._id);
+      // ログイン済
       $container.html( configMap.main_html1 + configMap.sub_html + configMap.main_html2  );
       setJqueryMap();
       tomo.list.initModule(jqueryMap.$container);
+
+    } else {
+      // 未ログイン
+      $container.html( configMap.main_html1 +configMap.main_html2  );
+      setJqueryMap();
+      // history.replaceState("tomoState","","/#list");
+      tomo.login.initModule(jqueryMap.$container);
     }
 
   };

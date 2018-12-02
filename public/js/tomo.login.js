@@ -105,9 +105,9 @@ onLogin = function( result ) {
   }
 }
 
-onItemLoaded = function( result ) {
+onItemLoaded = function(result ) {
   if ( result ) {
-    tomo.shell.initModule($('#tomo'), 'list');
+    tomo.shell.initModule($('#tomo'));
   } else {
     // jqueryMap.$msg.html( "ログインできませんでした<br>" +
     // "ユーザー名とパスワードを正しく入力してください");
@@ -124,7 +124,8 @@ initModule = function ( $append_target ) {
   setJqueryMap();
 
   $.gevent.subscribe( $("#tomo"), 'tomo-login', onLogin );
-  $.gevent.subscribe( $("#tomo"), 'tomo-item-loaded', onItemLoaded );
+  $.gevent.subscribe( $("#tomo"), 'tomo-item-loaded', 
+                      onItemLoaded );
 
   jqueryMap.$submit.on("click", function ( event ) {
     onSubmit();

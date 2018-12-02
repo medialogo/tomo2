@@ -66,7 +66,7 @@ tomo.model = (function () {
 
   makeUser = function ( user_map ) {
     var user,
-          id 		= user_map.id,
+          id 		= user_map._id,
           passwd    = user_map.passwd,
           name		= user_map.name;
 
@@ -76,12 +76,12 @@ tomo.model = (function () {
 
     // userオブジェクトを作成
     user			= Object.create( userProto );
-    user.id = null;
+    user._id = null;
     user.name = name;
     user.passwd = passwd;
     user.is_onlie = false;
 
-    if ( id ) { user.id = id; }
+    if ( id ) { user._id = id; }
     return user;
   };
 
@@ -118,7 +118,7 @@ tomo.model = (function () {
             order	= item_map.order,
             title    = item_map.title,
             memo		= item_map.memo;
-            if (cid.length === 0) { cid = makeTodoCid(linum)};
+            if ( !cid ) { cid = makeTodoCid(linum)};
 
         // itemオブジェクトを作成
         item = Object.create( itemProto );
@@ -137,7 +137,8 @@ tomo.model = (function () {
         return item;
   };
   clearItemDb = function (){
-    stateMap.todo_db = TAFFY();
+    // if (stateMap.todo_db)
+    stateMap.todo_db().remove();
   };
   //------------------- パブリックメソッド↓ -------------------
   // パブリックメソッド /users/ ↓
@@ -147,18 +148,12 @@ tomo.model = (function () {
     get_current_user = function () { return stateMap.current_user; };
 
     login = function ( name, passwd  ) {
-        var sio = isFakeData ? tomo.fake.mockSio : tomo.data.getSio();
-        
-        // stateMap.current_user = makeUser({
-        //     name : name,
-        //     passwd : passwd
-        // });
+
         if ( !name || !passwd ) {
             throw 'ユーザー名とパスワードを入力してください';
         }
     
         var result;
-        clearItemDb();
         $.ajax({
             async: true,
                 url: 'http://localhost:3000/login',
@@ -167,11 +162,9 @@ tomo.model = (function () {
             dataType: 'json'
             })
                .done(function(res){
-//                console.log(res[0].name);
                 if ( res ) {
-                    console.log("done" + Date.now());
                     result = true;
-                    completeLogin( res );
+                    stateMap.current_user = res[0];
                 } else {
                     result = false;
                 }    
@@ -214,20 +207,24 @@ tomo.model = (function () {
 
     get_items = function () { 
         var result;
-        console.log(stateMap.current_user._id);
+        //console.log(stateMap.current_user._id);
+        clearItemDb();
+
         $.ajax({
             async: true,
                 url: 'http://localhost:3000/ulist',
             type: 'post',
-            data:{ "uid" : stateMap.current_user._id},
+            data:{ "uid" : stateMap.current_user._id} ,
             dataType: 'json'
             })
-               .done(function(res){
-                if ( res ) {
+               .always(function(res, status, XHR){
+                if ( XHR.responseText ) {
                     var i, item_map;
                     result = true;
-                    for ( var i = 0; i < res.length; i++) {
-                        item_map = res[i];
+                    var items = JSON.parse(XHR.responseText);
+                    // console.log(items);
+                    for ( var i = 0; i < items.length; i++) {
+                        item_map = items[i];
                         makeItem({
                           id     : item_map._id,
                           cid    : item_map._id,
@@ -237,17 +234,18 @@ tomo.model = (function () {
                           title  : item_map.title,
                           memo   : item_map.memo
                         });
+                        console.log(i+":"+item_map);
                     }
                 } else {
                     result = false;
                 }    
-               })
-               .fail(function(xhr, status, error){
-                 alert("item" + status);
-                 result = false;
-               })
-               .always(function() {
-                    $.gevent.publish( 'tomo-item-loaded', true);
+            //    })
+            //    .fail(function(xhr, status, error){
+            //      console.log(xhr.responsText);
+            //      result = false;
+            //    })
+            //    .always(function() {
+                    $.gevent.publish( 'tomo-item-loaded', result);
                });
 
     };
