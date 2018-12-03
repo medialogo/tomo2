@@ -19,39 +19,18 @@ tomo.shell =(function () {
       page : { login : true, list : true}
     },
 
-      main_html1 : String()
+      main_html : String()
         + '<header>'
           + '<div class="tomo-shell-head" >'
             + '<div class="tomo-shell-head-logo"><span>Todo meMo</span></div>'
           + '</div>'
          + '</header>'
-        + '<div id="tomo-shell-main" >',
-
-      main_html2 : String()
+        + '<div id="tomo-shell-main" >'
         + '</div>'
         + '<footer class="tomo-shell-foot">'
         + '<div id="cr"><span>&copy;2018 mediaLogo</span></div>'
         + '</footer> '
         + '<!-- <div class="tomo-shell-modal">modal</div>  -->',
-
-    sub_html : String()
-        + '<div class="tomo-shell-main-nav">'
-          + '<div class="tomo-shell-main-command">'
-            + '<ul>'
-              + '<li><a href="#">new</a></li>'
-              + '<li><a href="#">todo</a></li>'
-              + '<li><a href="#">memo</a></li>'
-              + '<li><a href="#">del</a></li>'
-              + '<li><a href="#">any</a></li>'
-            + '</ul>'
-          + '</div>'
-          + '<div class="tomo-shell-main-search"><span>search</span></div>'
-        + '</div>'
-        + '<div class="tomo-shell-main-content">'
-          + '<div class="tomo-shell-main-list">'
-              + '<div id="tomo-list-frame"></div>'
-          + '</div>'
-        + '</div>',
 
   },
   stateMap = {
@@ -160,15 +139,18 @@ tomo.shell =(function () {
       anchor_map_proposed,
       is_ok = true,
       anchor_map_previous = copyAnchorMap();
-    console.log(event);
-    return;  
-    // アンカーの解析を試みる
+
+      // アンカーの解析を試みる
     try { anchor_map_proposed = $.uriAnchor.makeAnchorMap(); }
     catch (error) {
         $.uriAnchor.setAnchor( anchor_map_previous, null, true);
         return false;
     }
     stateMap.anchor_map = anchor_map_proposed;
+    console.log("hashchnaged from " + anchor_map_previous.page + 
+                           " to " + stateMap.anchor_map.page);
+
+    return;  
 
 
     return false;
@@ -179,38 +161,29 @@ tomo.shell =(function () {
   initModule = function ( $container ) {
     // HTMLをロードし、jQueryコレクションをマッピングする
     stateMap.$container = $container;
-
-    // 我々のスキーマを使うようにuriAnchorを設定する
-    // $.uriAnchor.configModule({
-    //   schema_map : configMap.anchor_schema_map
-    // });
-
     stateMap.current_user = tomo.model.users.get_current_user();
-    // $.gevent.subscribe( stateMap.$container, 'tomo-login', onLogin); 
+
     if ( stateMap.current_user && stateMap.current_user._id ) {
       console.log("user_id:" + stateMap.current_user._id);
       // ログイン済
-      $container.html( configMap.main_html1 + configMap.sub_html + configMap.main_html2  );
+      $container.html( configMap.main_html  );
       setJqueryMap();
-      $.uriAnchor.setAnchor({
-        page   : 'list',
-      });
+      $.uriAnchor.setAnchor({page   : 'list',});
       tomo.list.initModule(jqueryMap.$container);
 
     } else {
       // 未ログイン
-      $container.html( configMap.main_html1 +configMap.main_html2  );
+      $container.html( configMap.main_html  );
       setJqueryMap();
-      // history.replaceState("tomoState","","/#list");
-      $.uriAnchor.setAnchor({
-        page   : 'login',
-      });
+      $.uriAnchor.setAnchor({page   : 'login',});
       tomo.login.initModule(jqueryMap.$container);
     }
-    // $(window)
-      // .bind( 'hashchange', onHashchange);
+    $(window)
+      .bind( 'hashchange', onHashchange);
       // .trigger( 'hashchange');
   };
-  return { initModule : initModule};
+  return { 
+    initModule : initModule
+  };
   //-------- パブリックメソッド終了 ------------
 }());

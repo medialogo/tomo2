@@ -19,19 +19,6 @@ var
 
   configMap = {
     main_html : String()
-      + '<div id="tomo-login">'
-        + '<h4 id="tomo-login-head">ログイン</h4>'
-          +'<div id="tomo-login-main">'
-            +'<div id="tomo-login-message">ユーザー名とパスワードを入力してください</div>'
-            +'<form id="tomo-login-form">'
-            + 'ユーザー名<br><input type="text" id="tomo-login-form-name" value="takashi"><br>'
-            + 'パスワード<br><input type="password" id="tomo-login-form-passwd" value="lunkekke"><br><br>'
-            + '<input type="submit" id="tomo-login-form-submit" value="ログイン">'
-          + '</form>'
-          +'<div id="tomo-login-response">'
-        + '</div>'
-      + '</div>'
-
   },  
   
   stateMap = { $append_target : null},
@@ -106,7 +93,7 @@ onLogin = function(event, result ) {
   }
 }
 
-onItemLoaded = function(result ) {
+onItemLoaded = function(event, result ) {
   if ( result ) {
     tomo.shell.initModule($('#tomo'));
   } else {
@@ -121,17 +108,17 @@ onItemLoaded = function(result ) {
 // パブリックメソッド /initModule/ ↓
 initModule = function ( $append_target ) {
   stateMap.$append_target = $append_target;
-  $append_target.find("#tomo-shell-main").append( configMap.main_html );
-  setJqueryMap();
+  $append_target.find("#tomo-shell-main").load("src/_login.html" ,function(){
+    setJqueryMap();
 
-  $.gevent.subscribe( $("#tomo"), 'tomo-login', onLogin );
-  $.gevent.subscribe( $("#tomo"), 'tomo-item-loaded', 
-                      onItemLoaded );
+    $.gevent.subscribe( $("#tomo"), 'tomo-login', onLogin );
+    $.gevent.subscribe( $("#tomo"), 'tomo-item-loaded', onItemLoaded );
 
-  jqueryMap.$submit.on("click", function ( event ) {
-    onSubmit();
+    jqueryMap.$submit.on("click", function ( event ) {
+      onSubmit();
+    });
+
   });
-  
 
 };
 // パブリックメソッド /initModule/ ↑

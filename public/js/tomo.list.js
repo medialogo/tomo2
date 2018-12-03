@@ -17,19 +17,7 @@ tomo.list = (function () {
 //---------------- モジュールスコープ変数↓ --------------
 var
   configMap = {
-    main_html : String()
-      + '<div class="tomo-list">'
-        + '<div class="tomo-list-head">'
-          + '<div class="tomo-list-head-title">'
-            + '<button id="new-item">新規</button>'
-            + '<button id="del-item">削除</button>'
-          + '</div>'
-        + '</div>'
-        + '<div class="tomo-list-box">'
-            + '<ul class="tomo-list-items" ></ul>'
-        + '</div>' 
-      + '</div>'
-
+      main_html : String()
   },  
   
   stateMap = { $append_target : null,
@@ -44,7 +32,7 @@ var
 
   setJqueryMap,
   addNewItem, doReorder,
-  onClickNew, onClickItem, onClickDelete,
+  onClickNew, onClickSave, onClickDelete,
   configModule, initModule;
 
 //----------------- モジュールスコープ変数↑ ---------------
@@ -64,7 +52,8 @@ setJqueryMap = function () {
     $list_items = $append_target.find( '.tomo-list-items'),
     $list_item = $append_target.find( '.tomo-list-item'),
     $add_new = $append_target.find( '#new-item'),
-    $delete_item = $append_target.find( '#del-item')
+    $delete_item = $append_target.find( '#del-item'),
+    $save = $append_target.find( '#save')
 
   jqueryMap = {
     $list : $list,
@@ -74,6 +63,7 @@ setJqueryMap = function () {
     $list_item : $list_item,
     $add_new : $add_new,
     $delete_item : $delete_item,
+    $save : $save,
     $window		: $(window)
   };
 };
@@ -107,10 +97,8 @@ addNewItem = function( idx, item ) {
         + '"><span class="ui-icon ui-icon-triangle-2-n-s"></span> todo '
         + item.linum  + ' ' + item.title + " (" + item.order + ":" + item.cid + ")"
         + '</span></li>');
-      // }
 
-    //  $item.bind( 'utap', onClickItem );
-      $item.on("mousedown", function( event ) {
+        $item.on("mousedown", function( event ) {
 
         var $list = jqueryMap.$list_items;
 
@@ -135,7 +123,6 @@ addNewItem = function( idx, item ) {
       });
 
       jqueryMap.$list_items.append($item);
-      // var item_height = $item.height();
 
 }
 
@@ -179,8 +166,10 @@ onClickDelete = function( event ) {
   }
 }
 
-onClickItem = function ( event ) {
-  // console.log ( event.target);
+onClickSave = function ( event ) {
+
+
+
 }
 
 // イベントハンドラ終了
@@ -192,45 +181,35 @@ onClickItem = function ( event ) {
 initModule = function ( $append_target ) {
   // var get_db, todo_list = {}, item, idx;
   stateMap.$append_target = $append_target;
-  $append_target.find("#tomo-list-frame").append( configMap.main_html );
-  setJqueryMap();
+  //$append_target.find("#tomo-shell-main").append( configMap.main_html );
+  $append_target.find("#tomo-shell-main").load("src/_list.html" ,function(){
+    setJqueryMap();
 
-  stateMap.current_user = tomo.model.users.get_current_user(); 
-  stateMap.todo_db = tomo.model.todo.get_db(); 
+    stateMap.current_user = tomo.model.users.get_current_user(); 
+    stateMap.todo_db = tomo.model.todo.get_db(); 
 
-  jqueryMap.$list_items.sortable().selectable();
+    jqueryMap.$list_items.sortable().selectable();
 
 
-  stateMap.todo_db().order("order").each( function (item, idx) {
-/*     todo_list[idx] = {
-      id     : item._id,
-      cid    : item.cid,
-      uid    : item.uid,
-      linum  : item.linum,
-      order  : item.order,
-      title  : item.title,
-      memo   : item.memo
-    } */
-    addNewItem(idx, item);
+    stateMap.todo_db().order("order").each( function (item, idx) {
+  /*     todo_list[idx] = {
+        id     : item._id,
+        cid    : item.cid,
+        uid    : item.uid,
+        linum  : item.linum,
+        order  : item.order,
+        title  : item.title,
+        memo   : item.memo
+      } */
+      addNewItem(idx, item);
+    });
+
+    // ユーザー入力イベントをバインドする
+    jqueryMap.$add_new.bind('utap', onClickNew );
+    jqueryMap.$delete_item.bind('utap', onClickDelete );
+    jqueryMap.$save.bind('utap', onClickSave );
+
   });
-
-
-/*    for (var i=0; i<10; i++) {
-    onClickNew();
-  } 
- */
-  
-  // $list_box でjQueryグローバルイベントに登録する
-/*     $list_box = jqueryMap.$list_box;
-  $.gevent.subscribe( $list_box, 'tomo-listchange', onListchange );
-  $.gevent.subscribe( $list_box, 'tomo-setlistee', onSetlistee );
-*/
-  // ユーザー入力イベントをバインドする
-  jqueryMap.$add_new.bind('utap', onClickNew );
-  jqueryMap.$delete_item.bind('utap', onClickDelete );
-//    jqueryMap.$form.bind( 	'submit', onSubmitMsg );
-
-//    return true;
 };
 // パブリックメソッド /initModule/ ↑
 
