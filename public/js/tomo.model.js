@@ -161,21 +161,17 @@ tomo.model = (function () {
             data:{ "name" : name, "passwd" : passwd},
             dataType: 'json'
             })
-               .done(function(res){
-                if ( res ) {
-                    result = true;
+               .always(function(res, status, XHR){
+                var res =JSON.parse(XHR.responseText);
+                if ( res[0]) {
                     stateMap.current_user = res[0];
+                    console.log(res[0])
+                    result = true;
                 } else {
                     result = false;
                 }    
-               })
-               .fail(function(xhr, status, error){
-                 alert("login" + status);
-                 result = false;
-               })
-               .always(function() {
-
-                   $.gevent.publish( 'tomo-login', result);
+    
+                $.gevent.publish( 'tomo-login', result);
                });
 
     };

@@ -96,8 +96,9 @@ onSubmit = function() {
   }
 }
 
-onLogin = function( result ) {
+onLogin = function(event, result ) {
   if ( result ) {
+    console.log("onLogin:" + result);
     tomo.model.todo.get_items();
   } else {
     jqueryMap.$msg.html( "ログインできませんでした<br>" +
