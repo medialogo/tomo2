@@ -32,7 +32,6 @@ tomo.model = (function () {
     },
 
     isFakeData = false, // true,
-    hostname =  tomo.env.getHostName(),
 
     userProto, makeCid, completeLogin,
     makeUser, removeUser, users, 
@@ -155,10 +154,9 @@ tomo.model = (function () {
         }
     
         var result;
-
         $.ajax({
             async: true,
-                url: 'http://' + hostname + '/login',
+                url: 'http://localhost:3000/login',
             type: 'post',
             data:{ "name" : name, "passwd" : passwd},
             dataType: 'json'
@@ -170,7 +168,7 @@ tomo.model = (function () {
                 var res =JSON.parse(XHR.responseText);
                 if ( res[0]) {
                     stateMap.current_user = res[0];
-                    console.log(res[0])
+                    console.log(name)
                     result = true;
                 } else {
                     result = false;
@@ -213,7 +211,7 @@ tomo.model = (function () {
 
         $.ajax({
             async: true,
-                url: 'http://' + hostname + '/ulist',
+                url: 'http://localhost:3000/ulist',
             type: 'post',
             data:{ "uid" : stateMap.current_user._id} ,
             dataType: 'json'

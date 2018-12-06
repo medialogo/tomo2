@@ -1,0 +1,25 @@
+<html>
+    <head>
+            <script>
+                     function loadJS(src){
+                        var script = document.createElement('script');
+                        script.src = src;
+                        console.log(src);
+//                        document.getElementsByTagName("body").appendChild(script);
+                     }
+                    </script>
+            <script>
+                     var global2 = function(data){
+                        alert(data); // 2
+                        };
+                      loadJS('http://www4069ui.sakura.ne.jp/js/global2.js');
+                      alert(typeof global2); 
+                    </script>
+
+
+            
+    </head>
+        
+            <body>
+            </body>
+</html>
