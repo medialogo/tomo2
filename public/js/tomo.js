@@ -15,6 +15,7 @@
 var tomo = (function() {
   'use strict';
   var initModule = function( $container ) {
+//      tomo.env.getHostName();
       tomo.model.initModule();
       tomo.shell.initModule( $container );
   };
