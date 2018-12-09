@@ -106,7 +106,8 @@ tomo.model = (function () {
     },
   };
 
-    makeTodoCid = function ( num = 1 ){
+    makeTodoCid = function ( num ){
+        if ( num === undefined ) { num = 1 }
         return 'todo_' + ('00' + num ).slice(-2);
     };
 
